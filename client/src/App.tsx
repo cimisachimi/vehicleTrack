@@ -1,9 +1,10 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Login from "./pages/LoginPage";
 import Register from "./pages/RegisterPage";
-import VehicleList from "./pages/VehicleList";
+import DashboardPage from "./pages/DashboardPage";
 import VehicleDetail from "./pages/VehicleDetail";
 import { ProtectedRoute } from "./components/ProtectedRoute";
+import  VehiclePage  from './pages/VehiclePage';
 
 function App() {
   return (
@@ -17,7 +18,15 @@ function App() {
           path="/"
           element={
             <ProtectedRoute>
-              <VehicleList />
+              <DashboardPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/vehicle"
+          element={
+            <ProtectedRoute>
+              <VehiclePage />
             </ProtectedRoute>
           }
         />
