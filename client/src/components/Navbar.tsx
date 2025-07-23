@@ -15,7 +15,7 @@ export default function Navbar() {
   return (
     <nav className="bg-primary text-white px-6 py-4 flex justify-between items-center shadow-md">
       <div className="text-lg font-bold">
-        🚗 Vehicle Tracker {user ? `| Welcome, ${user.email}` : ""}
+        🚗 Vehicle Tracker {user ? `| Welcome, ${user.name}` : ""}
       </div>
       <div className="flex items-center gap-4">
         <Link to="/" className="hover:underline">Dashboard</Link>

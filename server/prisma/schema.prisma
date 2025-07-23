@@ -8,7 +8,7 @@ datasource db {
 }
 
 model Vehicle {
-  id         Int      @id @default(autoincrement())
+  id         Int            @id @default(autoincrement())
   name       String
   status     String
   fuel_level Int
@@ -16,11 +16,21 @@ model Vehicle {
   latitude   Float
   longitude  Float
   speed      Int
-  updated_at DateTime @default(now())
+  updated_at DateTime       @default(now())
+  tracks     VehicleTrack[]
 }
 
 model User {
   id       Int    @id @default(autoincrement())
   email    String @unique
   password String
+}
+
+model VehicleTrack {
+  id        Int      @id @default(autoincrement())
+  vehicleId Int
+  latitude  Float
+  longitude Float
+  timestamp DateTime @default(now())
+  vehicle   Vehicle  @relation(fields: [vehicleId], references: [id])
 }

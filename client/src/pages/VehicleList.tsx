@@ -11,11 +11,12 @@ export default function VehicleList() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetchVehicles();
+    fetchVehicles(); // Fetch initial data
+    const interval = setInterval(fetchVehicles, 4000); // Poll every 1 minute
+    return () => clearInterval(interval); // Cleanup on component unmount
   }, [fetchVehicles]);
 
-const defaultCenter: [number, number] = [-6.2, 106.816666]; // Jakarta
-
+  const defaultCenter: [number, number] = [-6.2, 106.816666]; // Jakarta
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -25,7 +26,7 @@ const defaultCenter: [number, number] = [-6.2, 106.816666]; // Jakarta
         {/* Vehicle List */}
         <div className="bg-white rounded-xl shadow-md p-4">
           <h2 className="text-xl font-semibold mb-4">Vehicles</h2>
-          {loading ? (
+          {loading && vehicles.length === 0 ? (
             <p>Loading...</p>
           ) : (
             <table className="w-full text-sm">
@@ -72,7 +73,7 @@ const defaultCenter: [number, number] = [-6.2, 106.816666]; // Jakarta
           <MapContainer center={defaultCenter} zoom={6} className="h-96 w-full rounded-lg">
             <TileLayer
               url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-              attribution='&copy; <a href="https://www.openstreetmap.            org/copyright">OpenStreetMap</a> contributors'
+              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
             />
 
             {vehicles.map((v) => (
