@@ -8,4 +8,5 @@ export interface Vehicle {
   longitude: number;
   speed: number;
   updated_at: string;
+  destination: string; // Add destination
 }

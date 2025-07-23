@@ -19,8 +19,19 @@ export default function VehicleDetail() {
 
   useEffect(() => {
     if (id) {
-      fetchVehicleById(Number(id));
-      fetchVehicleTrackById(Number(id));
+      const vehicleId = Number(id);
+      // Fetch data immediately on load
+      fetchVehicleById(vehicleId);
+      fetchVehicleTrackById(vehicleId);
+
+      // Set up an interval to refresh data every 5 seconds
+      const interval = setInterval(() => {
+        fetchVehicleById(vehicleId);
+        fetchVehicleTrackById(vehicleId);
+      }, 5000);
+
+      // Cleanup interval on component unmount
+      return () => clearInterval(interval);
     }
   }, [id, fetchVehicleById, fetchVehicleTrackById]);
 
@@ -28,56 +39,59 @@ export default function VehicleDetail() {
     return <p>Loading...</p>;
   }
 
-  const { name, status, fuel_level, speed, odometer, latitude, longitude, updated_at } = selectedVehicle;
+  const { name, status, fuel_level, speed, odometer, latitude, longitude, updated_at, destination } = selectedVehicle;
   const trackPositions: [number, number][] = vehicleTrack.map(p => [p.latitude, p.longitude]);
 
   return (
     <div className="min-h-screen bg-gray-50">
       <Navbar />
       <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6 max-w-7xl mx-auto">
+        
+        {/* Left Column: Details & History */}
         <div className="flex flex-col gap-6">
           <Card>
             <CardHeader>
               <CardTitle>{name}</CardTitle>
-              <p className="text-sm text-gray-500">{status}</p>
+              <p className={`text-sm ${status === 'ACTIVE' ? 'text-green-600' : 'text-red-600'}`}>{status}</p>
             </CardHeader>
             <CardContent className="space-y-4">
-              <p><strong>Fuel Level:</strong> {fuel_level}%</p>
+              <p><strong>Destination:</strong> {destination}</p>
               <p><strong>Speed:</strong> {speed} km/h</p>
               <p><strong>Odometer:</strong> {odometer} km</p>
+              <p><strong>Fuel Level:</strong> {fuel_level}%</p>
               <p><strong>Current Location:</strong> {latitude.toFixed(4)}, {longitude.toFixed(4)}</p>
-              <p className="text-xs text-gray-400">Updated at: {new Date(updated_at).toLocaleString()}</p>
+              <p className="text-xs text-gray-400">Last Updated: {new Date(updated_at).toLocaleString()}</p>
             </CardContent>
           </Card>
           
-          {/* Route History Table */}
           <Card>
             <CardHeader>
               <CardTitle>Route History</CardTitle>
             </CardHeader>
             <CardContent>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Timestamp</TableHead>
-                    <TableHead>Latitude</TableHead>
-                    <TableHead>Longitude</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {vehicleTrack.map((track) => (
-                    <TableRow key={track.id}>
-                      <TableCell>{new Date(track.timestamp).toLocaleString()}</TableCell>
-                      <TableCell>{track.latitude.toFixed(4)}</TableCell>
-                      <TableCell>{track.longitude.toFixed(4)}</TableCell>
+              <div className="max-h-60 overflow-y-auto">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Timestamp</TableHead>
+                      <TableHead>Coordinates</TableHead>
                     </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
+                  </TableHeader>
+                  <TableBody>
+                    {vehicleTrack.slice().reverse().map((track) => (
+                      <TableRow key={track.id}>
+                        <TableCell>{new Date(track.timestamp).toLocaleTimeString()}</TableCell>
+                        <TableCell>{track.latitude.toFixed(4)}, {track.longitude.toFixed(4)}</TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
             </CardContent>
           </Card>
         </div>
         
+        {/* Right Column: Map */}
         <div className="bg-white rounded-xl shadow-md">
           <MapContainer center={[latitude, longitude]} zoom={10} className="h-full w-full rounded-lg min-h-[400px]">
             <TileLayer
@@ -90,6 +104,7 @@ export default function VehicleDetail() {
             {trackPositions.length > 0 && <Polyline positions={trackPositions} color="blue" />}
           </MapContainer>
         </div>
+
       </div>
     </div>
   );

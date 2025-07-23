@@ -1,0 +1,4 @@
+-- AlterTable
+ALTER TABLE "Vehicle" ADD COLUMN     "destination" TEXT NOT NULL DEFAULT 'Bandung',
+ADD COLUMN     "routeIndex" INTEGER NOT NULL DEFAULT 0,
+ADD COLUMN     "traveled" DOUBLE PRECISION NOT NULL DEFAULT 0.0;

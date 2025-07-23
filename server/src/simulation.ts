@@ -2,58 +2,88 @@ import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
-function getRandomOffset() {
-  // Simulate a more noticeable movement for a 1-minute interval
-  return (Math.random() - 0.5) * 0.05;
+const routes = [
+  [
+    { name: "Jakarta", lat: -6.2088, lon: 106.8456 },
+    { name: "Bandung", lat: -6.9175, lon: 107.6191 },
+    { name: "Semarang", lat: -6.9667, lon: 110.4167 },
+    { name: "Yogyakarta", lat: -7.7972, lon: 110.3688 },
+    { name: "Surabaya", lat: -7.2575, lon: 112.7521 }
+  ]
+];
+
+// Haversine formula to calculate distance between two points on Earth
+function haversine(lat1: number, lon1: number, lat2: number, lon2: number) {
+  const R = 6371; // Earth's radius in km
+  const dLat = (lat2 - lat1) * Math.PI / 180;
+  const dLon = (lon2 - lon1) * Math.PI / 180;
+  const a = Math.sin(dLat / 2) ** 2 +
+    Math.cos(lat1 * Math.PI / 180) *
+    Math.cos(lat2 * Math.PI / 180) *
+    Math.sin(dLon / 2) ** 2;
+  return R * (2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a)));
+}
+
+// Function to find a point between two coordinates
+function interpolate(lat1: number, lon1: number, lat2: number, lon2: number, fraction: number) {
+  return {
+    lat: lat1 + (lat2 - lat1) * fraction,
+    lon: lon1 + (lon2 - lon1) * fraction
+  };
 }
 
 async function simulateMovement() {
   const vehicles = await prisma.vehicle.findMany();
 
   for (const vehicle of vehicles) {
-    // Only simulate movement for ACTIVE vehicles
     if (vehicle.status === "ACTIVE") {
-      const oldLatitude = vehicle.latitude;
-      const oldLongitude = vehicle.longitude;
-      const newLatitude = vehicle.latitude + getRandomOffset();
-      const newLongitude = vehicle.longitude + getRandomOffset();
+      const route = routes[0]; // Assuming all vehicles follow the same route for this demo
+      let currentIndex = vehicle.routeIndex;
+      let nextIndex = (currentIndex + 1) % route.length;
 
-      console.log(
-        `Updating ${vehicle.name}: [${oldLatitude.toFixed(4)}, ${oldLongitude.toFixed(4)}] -> [${newLatitude.toFixed(4)}, ${newLongitude.toFixed(4)}]`
-      );
+      const start = route[currentIndex];
+      const end = route[nextIndex];
 
+      const totalDistance = haversine(start.lat, start.lon, end.lat, end.lon);
+      const speed = vehicle.speed || 60; // km/h
+      const step = (speed / 3600) * 5; // Distance traveled in 5 seconds
+
+      let traveled = vehicle.traveled + step;
+      let newDestination = end.name;
+
+      if (traveled >= totalDistance) {
+        traveled = 0;
+        currentIndex = nextIndex;
+        nextIndex = (currentIndex + 1) % route.length;
+        newDestination = route[nextIndex].name;
+      }
+
+      const fraction = totalDistance > 0 ? traveled / totalDistance : 0;
+      const { lat, lon } = interpolate(start.lat, start.lon, end.lat, end.lon, fraction);
+
+      // Update vehicle in the database
       await prisma.vehicle.update({
         where: { id: vehicle.id },
-        data: {
-          latitude: newLatitude,
-          longitude: newLongitude,
-          // You could also update speed here if you want it to be dynamic
-        },
+        data: { 
+          latitude: lat, 
+          longitude: lon, 
+          traveled: traveled,
+          routeIndex: currentIndex,
+          destination: newDestination
+        }
       });
 
+      // Log the movement history
       await prisma.vehicleTrack.create({
-        data: {
-          vehicleId: vehicle.id,
-          latitude: newLatitude,
-          longitude: newLongitude,
-        },
+        data: { vehicleId: vehicle.id, latitude: lat, longitude: lon }
       });
-    } else {
-      // If INACTIVE, ensure speed is 0
-      if (vehicle.speed !== 0) {
-        await prisma.vehicle.update({
-          where: { id: vehicle.id },
-          data: {
-            speed: 0,
-          },
-        });
-        console.log(`Set speed of inactive vehicle ${vehicle.name} to 0.`);
-      }
+
+      console.log(`Vehicle ${vehicle.name}: now at [${lat.toFixed(4)}, ${lon.toFixed(4)}] heading to ${newDestination}`);
     }
   }
 }
 
 export function startSimulation() {
-  console.log("Vehicle movement simulation started (1-minute interval).");
-  setInterval(simulateMovement, 5000); // 1 minute
+  console.log("Vehicle route simulation started (5-second interval).");
+  setInterval(simulateMovement, 5000); // every 5 sec
 }
