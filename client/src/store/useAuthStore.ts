@@ -3,6 +3,7 @@ import { loginApi, registerApi } from "../api/auth";
 
 interface AuthState {
   token: string | null;
+  user: { email: string } | null;
   isAuthenticated: boolean;
   login: (email: string, password: string) => Promise<boolean>;
   register: (email: string, password: string) => Promise<boolean>;
@@ -11,13 +12,15 @@ interface AuthState {
 
 export const useAuthStore = create<AuthState>((set) => ({
   token: localStorage.getItem("token"),
+  user: JSON.parse(localStorage.getItem("user") || "null"),
   isAuthenticated: !!localStorage.getItem("token"),
 
   login: async (email, password) => {
     try {
-      const data = await loginApi(email, password);
+      const data = await loginApi(email, password); // { token, email }
       localStorage.setItem("token", data.token);
-      set({ token: data.token, isAuthenticated: true });
+      localStorage.setItem("user", JSON.stringify({ email: data.email }));
+      set({ token: data.token, user: { email: data.email }, isAuthenticated: true });
       return true;
     } catch {
       return false;
@@ -34,6 +37,7 @@ export const useAuthStore = create<AuthState>((set) => ({
 
   logout: () => {
     localStorage.removeItem("token");
-    set({ token: null, isAuthenticated: false });
+    localStorage.removeItem("user");
+    set({ token: null, user: null, isAuthenticated: false });
   },
 }));

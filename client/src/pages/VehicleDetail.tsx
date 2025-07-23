@@ -1,31 +1,40 @@
 import { useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { useVehicleStore } from "../store/useVehicleStore";
+import { useVehicleStore } from "@/store/useVehicleStore";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import Navbar from "@/components/Navbar";
 
 export default function VehicleDetail() {
-  const { id } = useParams<{ id: string }>();
-  const { selectedVehicle, fetchVehicleById, loading } = useVehicleStore();
+  const { id } = useParams();
+  const { selectedVehicle, fetchVehicleById } = useVehicleStore();
 
   useEffect(() => {
     if (id) fetchVehicleById(Number(id));
   }, [id, fetchVehicleById]);
 
-  if (loading) return <p className="text-center mt-10">Loading...</p>;
-  if (!selectedVehicle) return <p>No vehicle found</p>;
+  if (!selectedVehicle) return <p>Loading...</p>;
 
-  const v = selectedVehicle;
+  const { name, status, fuel_level, speed, odometer, latitude, longitude, updated_at } =
+    selectedVehicle;
 
   return (
-    <div className="p-4">
-      <h1 className="text-2xl font-bold">{v.name}</h1>
-      <p>Status: {v.status}</p>
-      <p>Fuel Level: {v.fuel_level}%</p>
-      <p>Odometer: {v.odometer} km</p>
-      <p>Speed: {v.speed} km/h</p>
-      <p>
-        Location: {v.latitude}, {v.longitude}
-      </p>
-      <p>Last Updated: {new Date(v.updated_at).toLocaleString()}</p>
+    <div className="min-h-screen bg-gray-50">
+      <Navbar />
+      <div className="p-6 max-w-3xl mx-auto">
+        <Card>
+          <CardHeader>
+            <CardTitle>{name}</CardTitle>
+            <p className="text-sm text-gray-500">{status}</p>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <p><strong>Fuel Level:</strong> {fuel_level}%</p>
+            <p><strong>Speed:</strong> {speed} km/h</p>
+            <p><strong>Odometer:</strong> {odometer} km</p>
+            <p><strong>Location:</strong> {latitude}, {longitude}</p>
+            <p className="text-xs text-gray-400">Updated at: {new Date(updated_at).toLocaleString()}</p>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 }
