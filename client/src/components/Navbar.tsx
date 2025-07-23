@@ -15,11 +15,11 @@ export default function Navbar() {
   return (
     <nav className="bg-primary text-white px-6 py-4 flex justify-between items-center shadow-md">
       <div className="text-lg font-bold">
-        🚗 Vehicle Tracker {user ? `| Welcome, ${user.name}` : ""}
+        <Link to="/" className="hover:underline">🚗 Vehicle Tracker</Link>
+        
       </div>
       <div className="flex items-center gap-4">
-        <Link to="/" className="hover:underline">Dashboard</Link>
-        <Link to="/" className="hover:underline">Vehicles</Link>
+        {user ? ` Logged in as, ${user.name}` : ""}
         <Button variant="secondary" onClick={handleLogout}>Logout</Button>
       </div>
     </nav>

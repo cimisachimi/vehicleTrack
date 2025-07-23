@@ -12,6 +12,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
 
+        {/* Set Vehicle List as the main page */}
         <Route
           path="/"
           element={

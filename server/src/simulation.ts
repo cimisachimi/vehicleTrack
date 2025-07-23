@@ -64,12 +64,13 @@ async function simulateMovement() {
       // Update vehicle in the database
       await prisma.vehicle.update({
         where: { id: vehicle.id },
-        data: { 
-          latitude: lat, 
-          longitude: lon, 
+        data: {
+          latitude: lat,
+          longitude: lon,
           traveled: traveled,
           routeIndex: currentIndex,
-          destination: newDestination
+          destination: newDestination,
+          updated_at: new Date() // Add this line to update the timestamp
         }
       });
 
