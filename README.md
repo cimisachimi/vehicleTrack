@@ -3,7 +3,7 @@ Vehicle Tracker
 A full-stack application for real-time vehicle tracking and fleet management. It provides live map visualization, detailed vehicle status, route history, and a backend simulation for vehicle movement.
 Live Demo
 
-Frontend (Vercel): vehicle-track-sooty.vercel.app
+Frontend (Vercel): https://vehicle-track-sooty.vercel.app
 
 Backend API: https://cimisachimi.online
 
