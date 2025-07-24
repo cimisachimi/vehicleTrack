@@ -1,144 +1,131 @@
 Vehicle Tracker
 
-A full-stack application for real-time vehicle tracking and fleet management. It features a live map, detailed vehicle status, route history, and a backend simulation for vehicle movement.
-
+A full-stack application for real-time vehicle tracking and fleet management. It provides live map visualization, detailed vehicle status, route history, and a backend simulation for vehicle movement.
 Live Demo
 
-A live version of the frontend is deployed on Vercel and is available here:
+    Frontend (Vercel): https://vehicle-track-sooty.vercel.app/
 
-https://vehicle-track-sooty.vercel.app/
+    Backend API: https://cimisachimi.online
 
-The backend API is running on a server and exposed via ngrok:
+Example Endpoints:
 
-    API Base URL: https://b119961ccb31.ngrok-free.app
+    GET https://cimisachimi.online/vehicles → Fetch all vehicles
 
-    Note: This application uses a free ngrok tunnel for the demo, which may have uptime limitations. If the demo is unresponsive, the tunnel may be temporarily down.
+    POST https://cimisachimi.online/auth/register → Register user
+
+    POST https://cimisachimi.online/auth/login → User login
 
 Features
 
-    User Authentication: Secure user registration and login system using JWT and bcrypt.
+    User Authentication: Secure registration and login with JWT & bcrypt.
 
-    Real-Time Map View: Track all vehicles simultaneously on an interactive map, with status-colored map pins (green for active, red for inactive).
+    Real-Time Map View: Track vehicles on an interactive map with status indicators (green = active, red = inactive).
 
-    Live Status Updates: Data is refreshed every 5 seconds to provide the latest information on vehicle status, speed, fuel level, and destination.
+    Live Status Updates: Refresh every 5 seconds for up-to-date speed, fuel level, and destination info.
 
-    Detailed Vehicle Pages: View comprehensive information for each vehicle, including key metrics and a map showing its historical route.
+    Vehicle Details Page: Includes route history and key stats.
 
-    Responsive Design: A mobile-friendly interface ensures a seamless experience on all devices, from desktops to smartphones.
+    Responsive Design: Mobile-first design for seamless experience.
 
-    Backend Data Simulation: A realistic vehicle movement simulation runs on the server to generate live tracking data.
+    Backend Simulation: Simulates realistic vehicle movement in real time.
 
 Tech Stack
 
-    Frontend: React, Vite, TypeScript, Tailwind CSS, Shadcn/UI, Zustand, React Leaflet.
+    Frontend: React, Vite, TypeScript, Tailwind CSS, Shadcn/UI, Zustand, React Leaflet
 
-    Backend: Node.js, Express, TypeScript.
+    Backend: Node.js, Express, TypeScript
 
-    Database: PostgreSQL with Prisma ORM.
+    Database: PostgreSQL with Prisma ORM
+
+    Deployment:
+
+        Frontend → Vercel
+
+        Backend → VPS with Nginx + SSL
+
+        Database → PostgreSQL
 
 Getting Started
-
-Follow these instructions to get a copy of the project up and running on your local machine.
-
 Prerequisites
 
-    Node.js (LTS version recommended)
+    Node.js (LTS recommended)
 
     pnpm (npm install -g pnpm)
 
-    A running PostgreSQL database instance
+    PostgreSQL instance running
 
-1. Backend Setup
+1️⃣ Backend Setup
 
-Bash
-
-# Navigate to the server directory
-
+# Navigate to backend directory
 cd server
 
 # Install dependencies
-
 pnpm install
 
-# Create an environment file
-
+# Copy env file
 cp .env.example .env
 
-Now, open the newly created .env file and add your database connection string and a JWT secret:
-
-.env
+Update .env:
 
 DATABASE_URL="postgresql://USER:PASSWORD@HOST:PORT/DATABASE"
-JWT_SECRET="your_super_long_and_random_jwt_secret"
+JWT_SECRET="your_super_secure_jwt_secret"
 
-Finally, set up the database and start the server:
-Bash
-
-# Apply database migrations
+Run migrations and seed data:
 
 npx prisma migrate dev
-
-# Seed the database with sample data
-
 pnpm run seed
 
-# Start the development server
+Start the backend:
 
 pnpm run dev
 
-The backend server will be running on http://localhost:5000.
+Runs on: http://localhost:5000
+2️⃣ Frontend Setup
 
-2. Frontend Setup
-
-Open a new terminal and navigate to the client directory:
-Bash
-
-# Navigate to the client directory
-
+# Navigate to frontend
 cd client
 
 # Install dependencies
-
 pnpm install
 
-# Start the development server
-
+# Start dev server
 pnpm run dev
 
-The frontend will be running on http://localhost:5173 and will be configured to communicate with your local backend.
+Runs on: http://localhost:5173
+API Base URL
 
-📜 Available Scripts
+    Production: https://cimisachimi.online
 
-Server (/server)
+    Local: http://localhost:5000
 
-    pnpm dev: Starts the backend server in development mode with hot-reloading.
+Available Scripts
 
-    pnpm build: Compiles the TypeScript code into JavaScript for production.
+Backend (/server):
 
-    pnpm start: Starts the compiled application for production.
+    pnpm dev → Run development server
 
-    pnpm seed: Populates the database with initial vehicle data.
+    pnpm build → Compile TypeScript
 
-Client (/client)
+    pnpm start → Start production build
 
-    pnpm dev: Starts the Vite development server for the frontend.
+    pnpm seed → Seed database
 
-    pnpm build: Builds the React app for production.
+Frontend (/client):
 
-    pnpm preview: Serves the production build locally for testing.
+    pnpm dev → Start Vite dev server
 
-☁️ Deployment
+    pnpm build → Build for production
 
-This application is configured for deployment on various platforms. The live demo uses the following setup:
+    pnpm preview → Preview production build
 
-    Frontend: The /client directory is deployed as a static site on Vercel.
+Deployment
 
-    Backend: The /server directory is running on a remote server.
+    Frontend → Vercel
 
-    Database: A managed PostgreSQL instance from Aiven.
+    Backend → VPS with Nginx + SSL
 
-For your own deployment, a similar setup is recommended.
+    Domain → Managed via Cloudflare
 
 📄 License
 
-This project is licensed under the [MIT License](LICENSE).
+This project is licensed under the MIT License.
