@@ -1,10 +1,12 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:5000',
+  baseURL: import.meta.env.VITE_API_URL || "http://localhost:5000",
+  headers: {
+    "ngrok-skip-browser-warning": "true" // ✅ Important for ngrok
+  }
 });
 
-// ... rest of the file remains the same
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem("token");
   if (token) {
