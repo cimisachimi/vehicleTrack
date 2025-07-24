@@ -10,6 +10,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
+import { Label } from "@/components/ui/label";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -24,8 +25,13 @@ export default function Login() {
     setIsLoading(true);
     setError("");
 
-    const success = await login(email, password);
+    if (!email || !password) {
+      setError("Email and password are required.");
+      setIsLoading(false);
+      return;
+    }
 
+    const success = await login(email, password);
     setIsLoading(false);
 
     if (success) {
@@ -36,45 +42,60 @@ export default function Login() {
   };
 
   return (
-    <div className="flex justify-center items-center h-screen">
+    <div className="flex flex-col justify-center items-center h-screen bg-gray-50 p-4">
+      <div className="text-center mb-6">
+        <h1 className="text-4xl font-bold">🚗 Vehicle Tracker</h1>
+      </div>
       <Card className="w-full max-w-md animate__animated animate__fadeIn">
         <CardHeader>
           <CardTitle className="text-center text-xl">Login</CardTitle>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
-            <Input
-              type="email"
-              placeholder="Email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              disabled={isLoading}
-            />
-            <Input
-              type="password"
-              placeholder="Password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              disabled={isLoading}
-            />
-            {error && <p className="text-red-500 text-sm">{error}</p>}
+            <div className="space-y-2">
+              <Label htmlFor="email">Email</Label>
+              <Input
+                id="email"
+                type="email"
+                placeholder="you@example.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+                disabled={isLoading}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="password">Password</Label>
+              <Input
+                id="password"
+                type="password"
+                placeholder="••••••••"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                disabled={isLoading}
+              />
+            </div>
+            {error && <p className="text-sm font-medium text-destructive">{error}</p>}
             <Button className="w-full" type="submit" disabled={isLoading}>
               {isLoading ? <Spinner className="size-5" /> : "Login"}
             </Button>
-            <p className="text-center text-sm mt-2">
-              Don’t have an account?{" "}
-              <span
-                onClick={() => !isLoading && navigate("/register")}
-                className={`text-blue-500 ${isLoading ? "cursor-not-allowed text-opacity-50" : "cursor-pointer"}`}
-              >
-                Register
-              </span>
-            </p>
           </form>
+          <p className="text-center text-sm mt-4">
+            Don’t have an account?{" "}
+            <span
+              onClick={() => !isLoading && navigate("/register")}
+              className={`text-blue-500 ${isLoading ? "cursor-not-allowed text-opacity-50" : "cursor-pointer"}`}
+            >
+              Register
+            </span>
+          </p>
         </CardContent>
       </Card>
+      <div className="text-center mt-6 text-sm text-gray-500">
+        <p>Made by Muhammad Faturahman</p>
+        <p>mfaturrahmann@gmail.com</p>
+      </div>
     </div>
   );
 }
