@@ -10,7 +10,7 @@ async function main() {
   await prisma.vehicle.createMany({
     data: [
       {
-        name: "Truck Alpha",
+        name: "Truck Barang",
         status: "ACTIVE",
         fuel_level: 80,
         odometer: 12000,
@@ -21,7 +21,7 @@ async function main() {
         destination: "Bandung",
       },
       {
-        name: "Truck Beta",
+        name: "Truck Pasir",
         status: "INACTIVE",
         fuel_level: 40,
         odometer: 15000,
@@ -32,7 +32,7 @@ async function main() {
         destination: "Jakarta",
       },
       {
-        name: "Van Gamma",
+        name: "Van Kurir",
         status: "ACTIVE",
         fuel_level: 95,
         odometer: 8500,
@@ -43,7 +43,7 @@ async function main() {
         destination: "Semarang",
       },
       {
-        name: "Sedan Delta",
+        name: "Sedan 2 Seater",
         status: "ACTIVE",
         fuel_level: 70,
         odometer: 22000,
@@ -54,7 +54,7 @@ async function main() {
         destination: "Yogyakarta",
       },
       {
-        name: "Bus Epsilon",
+        name: "Bus Tingkat",
         status: "INACTIVE",
         fuel_level: 50,
         odometer: 31000,

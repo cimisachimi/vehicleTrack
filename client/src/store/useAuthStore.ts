@@ -10,14 +10,14 @@ interface AuthState {
   logout: () => void;
 }
 
-export const useAuthStore = create<AuthState>((set) => ({
+export const useAuthStore = create<AuthState>((set, get) => ({
   token: localStorage.getItem("token"),
   user: JSON.parse(localStorage.getItem("user") || "null"),
   isAuthenticated: !!localStorage.getItem("token"),
 
   login: async (email, password) => {
     try {
-      const data = await loginApi(email, password); // { token, email }
+      const data = await loginApi(email, password);
       const name = data.email.split("@")[0];
       localStorage.setItem("token", data.token);
       localStorage.setItem("user", JSON.stringify({ email: data.email, name }));
@@ -34,7 +34,12 @@ export const useAuthStore = create<AuthState>((set) => ({
 
   register: async (email, password) => {
     try {
-      return await registerApi(email, password);
+      const registrationSuccessful = await registerApi(email, password);
+      if (registrationSuccessful) {
+        // Automatically log in after successful registration
+        return await get().login(email, password);
+      }
+      return false;
     } catch {
       return false;
     }

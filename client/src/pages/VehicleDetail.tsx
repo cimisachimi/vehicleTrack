@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import { useVehicleStore } from "@/store/useVehicleStore";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import Navbar from "@/components/Navbar";
+import { Progress } from "@/components/ui/progress"; // Import the new Progress component
 import {
   MapContainer,
   TileLayer,
@@ -12,7 +13,7 @@ import {
   useMap,
 } from "react-leaflet";
 import { Icon } from "leaflet";
-import { Gauge, Zap, Route } from "lucide-react"; // Icons for metrics
+import { Gauge, Zap, Route, MapPin } from "lucide-react";
 import {
   Table,
   TableBody,
@@ -60,7 +61,11 @@ export default function VehicleDetail() {
   }, [id, fetchVehicleById, fetchVehicleTrackById]);
 
   if (!selectedVehicle) {
-    return <p>Loading vehicle data...</p>;
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <p>Loading vehicle data...</p>
+      </div>
+    );
   }
 
   const {
@@ -73,63 +78,78 @@ export default function VehicleDetail() {
     longitude,
     updated_at,
     destination,
+    traveled,
   } = selectedVehicle;
+
   const trackPositions: [number, number][] = vehicleTrack.map((p) => [
     p.latitude,
     p.longitude,
   ]);
   const currentPosition: [number, number] = [latitude, longitude];
 
-  const greenIcon = new Icon({
-    iconUrl:
-      "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png",
-    shadowUrl:
-      "https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png",
+  const createIcon = (iconUrl: string) => new Icon({
+    iconUrl,
+    shadowUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png",
     iconSize: [25, 41],
     iconAnchor: [12, 41],
     popupAnchor: [1, -34],
     shadowSize: [41, 41],
   });
 
-  const redIcon = new Icon({
-    iconUrl:
-      "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png",
-    shadowUrl:
-      "https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png",
-    iconSize: [25, 41],
-    iconAnchor: [12, 41],
-    popupAnchor: [1, -34],
-    shadowSize: [41, 41],
-  });
+  const greenIcon = createIcon("https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png");
+  const redIcon = createIcon("https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png");
+  const yellowIcon = createIcon("https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-yellow.png");
+
+  const getStatusInfo = () => {
+    switch (status) {
+      case "ACTIVE":
+        return {
+          text: `Active - Heading to ${destination}`,
+          color: "text-green-600",
+          icon: greenIcon,
+        };
+      case "REFUELING":
+        return {
+          text: "Refueling",
+          color: "text-yellow-600",
+          icon: yellowIcon,
+        };
+      default:
+        return {
+          text: "Inactive",
+          color: "text-red-600",
+          icon: redIcon,
+        };
+    }
+  };
+
+  const statusInfo = getStatusInfo();
 
   return (
     <div className="min-h-screen bg-gray-50">
       <Navbar />
       <div className="p-6 max-w-7xl mx-auto">
-        {/* Header */}
         <div className="mb-6">
           <h1 className="text-3xl font-bold">{name}</h1>
-          <p
-            className={`font-semibold ${
-              status === "ACTIVE" ? "text-green-600" : "text-red-600"
-            }`}
-          >
-            {status} - Heading to {destination}
+          <p className={`font-semibold ${statusInfo.color}`}>
+            {statusInfo.text}
           </p>
           <p className="text-sm text-gray-500">
             Last updated: {new Date(updated_at).toLocaleString()}
           </p>
         </div>
 
-        {/* Key Metrics */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between pb-2">
               <CardTitle className="text-sm font-medium">Fuel Level</CardTitle>
               <Gauge className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{fuel_level}%</div>
+              <div className="flex items-center gap-2">
+                <Progress value={fuel_level} className="h-3 flex-1" />
+                <span className="text-lg font-bold">{fuel_level.toFixed(1)}%</span>
+              </div>
             </CardContent>
           </Card>
           <Card>
@@ -150,9 +170,20 @@ export default function VehicleDetail() {
               <div className="text-2xl font-bold">{odometer} km</div>
             </CardContent>
           </Card>
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between pb-2">
+              <CardTitle className="text-sm font-medium">Route Progress</CardTitle>
+              <MapPin className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">{traveled.toFixed(2)} km</div>
+              <p className="text-xs text-muted-foreground">
+                traveled towards {destination}
+              </p>
+            </CardContent>
+          </Card>
         </div>
 
-        {/* Map and Route History */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <Card className="h-[500px]">
             <MapContainer
@@ -167,7 +198,7 @@ export default function VehicleDetail() {
               <MapUpdater center={currentPosition} zoom={10} />
               <Marker
                 position={currentPosition}
-                icon={status === "ACTIVE" ? greenIcon : redIcon}
+                icon={statusInfo.icon}
               >
                 <Popup>
                   <strong>{name}</strong>

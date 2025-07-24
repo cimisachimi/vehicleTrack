@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "Vehicle" ALTER COLUMN "odometer" SET DATA TYPE DOUBLE PRECISION;

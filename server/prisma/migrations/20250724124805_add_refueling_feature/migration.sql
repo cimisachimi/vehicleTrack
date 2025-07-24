@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "Vehicle" ADD COLUMN     "refuelStartTime" TIMESTAMP(3),
+ALTER COLUMN "fuel_level" SET DATA TYPE DOUBLE PRECISION;

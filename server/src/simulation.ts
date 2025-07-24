@@ -12,6 +12,9 @@ const routes = [
   ]
 ];
 
+const FUEL_CONSUMPTION_RATE = 0.05; // Fuel units consumed per 5-second interval when moving
+const REFUEL_TIME_MINUTES = 5; // 5 minutes to refuel
+
 // Haversine formula to calculate distance between two points on Earth
 function haversine(lat1: number, lon1: number, lat2: number, lon2: number) {
   const R = 6371; // Earth's radius in km
@@ -37,7 +40,27 @@ async function simulateMovement() {
 
   for (const vehicle of vehicles) {
     if (vehicle.status === "ACTIVE") {
-      const route = routes[0]; // Assuming all vehicles follow the same route for this demo
+      // --- Handle Fuel Consumption ---
+      const newFuelLevel = vehicle.fuel_level - FUEL_CONSUMPTION_RATE;
+
+      if (newFuelLevel <= 10) {
+        // Low fuel, so we start refueling
+        await prisma.vehicle.update({
+          where: { id: vehicle.id },
+          data: {
+            status: "REFUELING",
+            fuel_level: newFuelLevel,
+            speed: 0, // Stop the vehicle
+            refuelStartTime: new Date(), // Log when refueling starts
+            updated_at: new Date()
+          }
+        });
+        console.log(`Vehicle ${vehicle.name} has low fuel and is now refueling.`);
+        continue; // Skip to the next vehicle
+      }
+
+      // --- Handle Movement ---
+      const route = routes[0];
       let currentIndex = vehicle.routeIndex;
       let nextIndex = (currentIndex + 1) % route.length;
 
@@ -70,7 +93,9 @@ async function simulateMovement() {
           traveled: traveled,
           routeIndex: currentIndex,
           destination: newDestination,
-          updated_at: new Date() // Add this line to update the timestamp
+          fuel_level: newFuelLevel,
+          odometer: vehicle.odometer + step, // Update the odometer with the precise step value
+          updated_at: new Date()
         }
       });
 
@@ -79,7 +104,30 @@ async function simulateMovement() {
         data: { vehicleId: vehicle.id, latitude: lat, longitude: lon }
       });
 
-      console.log(`Vehicle ${vehicle.name}: now at [${lat.toFixed(4)}, ${lon.toFixed(4)}] heading to ${newDestination}`);
+      console.log(`Vehicle ${vehicle.name}: now at [${lat.toFixed(4)}, ${lon.toFixed(4)}] heading to ${newDestination}. Fuel: ${newFuelLevel.toFixed(2)}%`);
+
+    } else if (vehicle.status === "REFUELING") {
+      // --- Handle Refueling Logic ---
+      if (vehicle.refuelStartTime) {
+        const timeSinceRefuelStart = new Date().getTime() - vehicle.refuelStartTime.getTime();
+        const minutesPassed = timeSinceRefuelStart / (1000 * 60);
+
+        if (minutesPassed >= REFUEL_TIME_MINUTES) {
+          // Refueling finished
+          await prisma.vehicle.update({
+            where: { id: vehicle.id },
+            data: {
+              status: "ACTIVE",
+              fuel_level: 100, // Full tank!
+              refuelStartTime: null, // Clear the start time
+              updated_at: new Date()
+            }
+          });
+          console.log(`Vehicle ${vehicle.name} has finished refueling and is now active.`);
+        } else {
+          console.log(`Vehicle ${vehicle.name} is still refueling...`);
+        }
+      }
     }
   }
 }

@@ -18,6 +18,18 @@ import {
   CardTitle,
   CardDescription,
 } from "@/components/ui/card";
+import { Progress } from "@/components/ui/progress";
+
+const getStatusClass = (status: string) => {
+  switch (status) {
+    case "ACTIVE":
+      return "bg-green-100 text-green-800";
+    case "REFUELING":
+      return "bg-yellow-100 text-yellow-800";
+    default:
+      return "bg-red-100 text-red-800";
+  }
+};
 
 export default function VehiclePage() {
   const { vehicles, fetchVehicles, loading } = useVehicleStore();
@@ -25,6 +37,8 @@ export default function VehiclePage() {
 
   useEffect(() => {
     fetchVehicles();
+    const interval = setInterval(fetchVehicles, 5000);
+    return () => clearInterval(interval);
   }, [fetchVehicles]);
 
   return (
@@ -37,7 +51,7 @@ export default function VehiclePage() {
         ) : (
           <div>
             {/* Desktop View: Table */}
-            <div className="hidden md:block bg-white rounded-xl shadow-md p-4">
+            <div className="hidden md:block bg-white rounded-xl shadow-md p-4 overflow-x-auto">
               <Table>
                 <TableHeader>
                   <TableRow>
@@ -46,6 +60,7 @@ export default function VehiclePage() {
                     <TableHead>Status</TableHead>
                     <TableHead>Fuel Level</TableHead>
                     <TableHead>Odometer</TableHead>
+                    <TableHead>Traveled</TableHead>
                     <TableHead>Location</TableHead>
                     <TableHead>Speed</TableHead>
                     <TableHead>Destination</TableHead>
@@ -60,17 +75,21 @@ export default function VehiclePage() {
                       <TableCell className="font-medium">{v.name}</TableCell>
                       <TableCell>
                         <span
-                          className={`px-2 py-1 rounded text-xs font-semibold ${
-                            v.status === "ACTIVE"
-                              ? "bg-green-100 text-green-800"
-                              : "bg-red-100 text-red-800"
-                          }`}
+                          className={`px-2 py-1 rounded text-xs font-semibold ${getStatusClass(v.status)}`}
                         >
                           {v.status}
                         </span>
                       </TableCell>
-                      <TableCell>{v.fuel_level}%</TableCell>
-                      <TableCell>{v.odometer} km</TableCell>
+                      <TableCell>
+                        <div className="flex items-center gap-2">
+                          <Progress value={v.fuel_level} className="h-2 w-20" />
+                          {/* Use toFixed(0) for a whole number percentage */}
+                          <span>{v.fuel_level.toFixed(0)}%</span>
+                        </div>
+                      </TableCell>
+                      {/* Use Math.round() for a clean odometer reading */}
+                      <TableCell>{Math.round(v.odometer)} km</TableCell>
+                      <TableCell>{v.traveled.toFixed(2)} km</TableCell>
                       <TableCell>
                         {v.latitude.toFixed(4)}, {v.longitude.toFixed(4)}
                       </TableCell>
@@ -108,11 +127,7 @@ export default function VehiclePage() {
                       <p className="font-semibold">Status</p>
                       <p>
                         <span
-                          className={`px-2 py-1 rounded text-xs font-semibold ${
-                            v.status === "ACTIVE"
-                              ? "bg-green-100 text-green-800"
-                              : "bg-red-100 text-red-800"
-                          }`}
+                          className={`px-2 py-1 rounded text-xs font-semibold ${getStatusClass(v.status)}`}
                         >
                           {v.status}
                         </span>
@@ -122,13 +137,22 @@ export default function VehiclePage() {
                       <p className="font-semibold">Speed</p>
                       <p>{v.speed} km/h</p>
                     </div>
-                    <div>
+                    <div className="col-span-2">
                       <p className="font-semibold">Fuel</p>
-                      <p>{v.fuel_level}%</p>
+                      <div className="flex items-center gap-2 mt-1">
+                        <Progress value={v.fuel_level} className="h-2 flex-1" />
+                        {/* Use toFixed(0) for a whole number percentage */}
+                        <span>{v.fuel_level.toFixed(0)}%</span>
+                      </div>
                     </div>
                     <div>
                       <p className="font-semibold">Odometer</p>
-                      <p>{v.odometer} km</p>
+                      {/* Use Math.round() for a clean odometer reading */}
+                      <p>{Math.round(v.odometer)} km</p>
+                    </div>
+                    <div>
+                      <p className="font-semibold">Route Progress</p>
+                      <p>{v.traveled.toFixed(2)} km</p>
                     </div>
                     <div className="col-span-2">
                       <p className="font-semibold">Destination</p>

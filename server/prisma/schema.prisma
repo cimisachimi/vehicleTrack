@@ -8,19 +8,20 @@ datasource db {
 }
 
 model Vehicle {
-  id          Int            @id @default(autoincrement())
-  name        String
-  status      String
-  fuel_level  Int
-  odometer    Int
-  latitude    Float
-  longitude   Float
-  speed       Int
-  updated_at  DateTime       @default(now())
-  tracks      VehicleTrack[]
-  routeIndex  Int            @default(0)
-  traveled    Float          @default(0.0)
-  destination String         @default("Bandung")
+  id              Int            @id @default(autoincrement())
+  name            String
+  status          String
+  fuel_level      Float
+  odometer        Float          // Changed from Int to Float
+  latitude        Float
+  longitude       Float
+  speed           Int
+  updated_at      DateTime       @default(now())
+  tracks          VehicleTrack[]
+  routeIndex      Int            @default(0)
+  traveled        Float          @default(0.0)
+  destination     String         @default("Bandung")
+  refuelStartTime DateTime?
 }
 
 model User {
