@@ -57,7 +57,7 @@ export default function VehicleList() {
   return (
     <div className="min-h-screen bg-gray-50">
       <Navbar />
-      <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="p-6 grid grid-cols-1 gap-6">
         {/* Vehicle List */}
         <div className="bg-white rounded-xl shadow-md p-4">
           <h2 className="text-xl font-semibold mb-4">Live Vehicle Status</h2>
