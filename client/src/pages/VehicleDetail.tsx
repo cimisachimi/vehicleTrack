@@ -167,7 +167,7 @@ export default function VehicleDetail() {
               <Route className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{odometer} km</div>
+              <div className="text-2xl font-bold">{odometer.toFixed(1)} km</div>
             </CardContent>
           </Card>
           <Card>
