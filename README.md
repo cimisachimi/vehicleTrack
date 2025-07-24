@@ -141,4 +141,4 @@ For your own deployment, a similar setup is recommended.
 
 📄 License
 
-This project is unlicensed. Please add a LICENSE file if you wish to license it.
+This project is licensed under the [MIT License](LICENSE).
