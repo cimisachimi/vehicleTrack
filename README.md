@@ -3,8 +3,7 @@ Vehicle Tracker
 A full-stack application for real-time vehicle tracking and fleet management. It provides live map visualization, detailed vehicle status, route history, and a backend simulation for vehicle movement.
 Live Demo
 
-    Frontend (Vercel): https://vehicle-track-sooty.vercel.app/
-
+    Frontend (Vercel): vehicle-track-sooty.vercel.app
     Backend API: https://cimisachimi.online
 
 Example Endpoints:
@@ -14,6 +13,13 @@ Example Endpoints:
     POST https://cimisachimi.online/auth/register → Register user
 
     POST https://cimisachimi.online/auth/login → User login
+
+    
+🖼 Screenshots
+Dashboard View
+<img width="889" height="928" alt="image" src="https://github.com/user-attachments/assets/736c0045-7181-4ac9-b8d2-e81f861951c4" />
+Vehicle Details
+<img width="890" height="759" alt="image" src="https://github.com/user-attachments/assets/dda4024c-208a-4f58-a1a4-e1b08fd11b0d" />
 
 Features
 
