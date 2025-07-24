@@ -1,138 +1,136 @@
-Vehicle Tracker
+# Vehicle Tracker
 
-A full-stack application for real-time vehicle tracking and fleet management. It provides live map visualization, detailed vehicle status, route history, and a backend simulation for vehicle movement.
-Live Demo
+A full-stack application for real-time vehicle tracking and fleet management. It provides live map visualization, detailed vehicle status, route history, and a backend simulation for vehicle movement, fuel consumption, and refueling.
 
-Frontend (Vercel): https://vehicle-track-sooty.vercel.app
+---
 
-Backend API: https://cimisachimi.online
+### **Live Demo**
 
-Example Endpoints:
+- **Frontend (Vercel):** [https://vehicle-track-sooty.vercel.app](https://vehicle-track-sooty.vercel.app)
+- **Backend API:** `https://cimisachimi.online`
 
-    GET https://cimisachimi.online/vehicles → Fetch all vehicles
+**Example Endpoints:**
 
-    POST https://cimisachimi.online/auth/register → Register user
+- `GET https://cimisachimi.online/vehicles` → Fetch all vehicles
+- `POST https://cimisachimi.online/auth/register` → Register a new user
+- `POST https://cimisachimi.online/auth/login` → Log in a user
 
-    POST https://cimisachimi.online/auth/login → User login
+---
 
-    
-🖼 Screenshots
-Dashboard View
-<img width="889" height="928" alt="image" src="https://github.com/user-attachments/assets/736c0045-7181-4ac9-b8d2-e81f861951c4" />
-Vehicle Details
-<img width="890" height="759" alt="image" src="https://github.com/user-attachments/assets/dda4024c-208a-4f58-a1a4-e1b08fd11b0d" />
+### 🖼️ **Screenshots**
 
-Features
+**Dashboard View**
+_Live map with permanent vehicle name labels and status-colored markers._
+![Dashboard View](https://i.imgur.com/your_new_dashboard_image.png)
 
-    User Authentication: Secure registration and login with JWT & bcrypt.
+**Vehicle List View**
+_Detailed table with responsive scrolling and fuel progress bars._
+![Vehicle List View](https://i.imgur.com/your_vehicle_list_image.png)
 
-    Real-Time Map View: Track vehicles on an interactive map with status indicators (green = active, red = inactive).
+---
 
-    Live Status Updates: Refresh every 5 seconds for up-to-date speed, fuel level, and destination info.
+### **Features**
 
-    Vehicle Details Page: Includes route history and key stats.
+- **User Authentication:** Secure user registration and login system using JWT and bcrypt.
+- **Automatic Login:** Users are automatically logged in after a successful registration.
+- **Real-Time Map View:** Track all vehicles simultaneously on an interactive map with status-colored map pins (🟢 for active, 🔴 for inactive, 🟡 for refueling).
+- **Live Status Updates:** Data is refreshed every 5 seconds to provide the latest information on vehicle status, speed, fuel level, and destination.
+- **Detailed Vehicle Pages:** View comprehensive information for each vehicle, including key metrics, a fuel progress bar, and a map showing its historical route.
+- **Responsive Design:** A mobile-friendly interface ensures a seamless experience on all devices, with a scrollable table for medium screens.
+- **Backend Data Simulation:** A realistic vehicle movement simulation runs on the server to generate live tracking data, including fuel consumption, odometer updates, and a 5-minute refueling cycle when fuel is low.
 
-    Responsive Design: Mobile-first design for seamless experience.
+---
 
-    Backend Simulation: Simulates realistic vehicle movement in real time.
+### **Tech Stack**
 
-Tech Stack
+- **Frontend:** React, Vite, TypeScript, Tailwind CSS, Shadcn/UI, Zustand, React Leaflet
+- **Backend:** Node.js, Express 4, TypeScript
+- **Database:** PostgreSQL with Prisma ORM
 
-    Frontend: React, Vite, TypeScript, Tailwind CSS, Shadcn/UI, Zustand, React Leaflet
+**Deployment:**
 
-    Backend: Node.js, Express, TypeScript
+- **Frontend:** Vercel
+- **Backend:** VPS with Nginx as a reverse proxy and SSL
+- **Database:** PostgreSQL hosted on Aiven
 
-    Database: PostgreSQL with Prisma ORM
+---
 
-    Deployment:
+### **Getting Started**
 
-        Frontend → Vercel
+**Prerequisites**
 
-        Backend → VPS with Nginx + SSL
+- Node.js (LTS recommended)
+- pnpm (`npm install -g pnpm`)
+- A running PostgreSQL database instance
 
-        Database → PostgreSQL
+#### **1️⃣ Backend Setup**
 
-Getting Started
-Prerequisites
-
-    Node.js (LTS recommended)
-
-    pnpm (npm install -g pnpm)
-
-    PostgreSQL instance running
-
-1️⃣ Backend Setup
-
-# Navigate to backend directory
+```bash
+# Navigate to the server directory
 cd server
 
 # Install dependencies
 pnpm install
 
-# Copy env file
+# Create an environment file
 cp .env.example .env
 
-Update .env:
+Update the newly created .env file with your database connection string and a JWT secret:
 
 DATABASE_URL="postgresql://USER:PASSWORD@HOST:PORT/DATABASE"
-JWT_SECRET="your_super_secure_jwt_secret"
+JWT_SECRET="your_super_long_and_random_jwt_secret"
 
-Run migrations and seed data:
+Finally, set up the database and start the server:
+Bash
 
+# Apply database migrations
 npx prisma migrate dev
+
+# Seed the database with sample data
 pnpm run seed
 
-Start the backend:
-
+# Start the development server
 pnpm run dev
 
-Runs on: http://localhost:5000
+The backend server will be running on http://localhost:5000.
+
 2️⃣ Frontend Setup
 
-# Navigate to frontend
+Open a new terminal and navigate to the client directory:
+Bash
+
+# Navigate to the client directory
 cd client
 
 # Install dependencies
 pnpm install
 
-# Start dev server
+# Start the development server
 pnpm run dev
 
-Runs on: http://localhost:5173
-API Base URL
+The frontend will be running on http://localhost:5173 and will be configured to communicate with your local backend.
 
-    Production: https://cimisachimi.online
+📜 Available Scripts
 
-    Local: http://localhost:5000
+Backend (/server)
 
-Available Scripts
+    pnpm dev: Starts the backend server in development mode with hot-reloading.
 
-Backend (/server):
+    pnpm build: Compiles the TypeScript code into JavaScript for production.
 
-    pnpm dev → Run development server
+    pnpm start: Starts the compiled application for production.
 
-    pnpm build → Compile TypeScript
+    pnpm seed: Populates the database with initial vehicle data.
 
-    pnpm start → Start production build
+Frontend (/client)
 
-    pnpm seed → Seed database
+    pnpm dev: Starts the Vite development server for the frontend.
 
-Frontend (/client):
+    pnpm build: Builds the React app for production.
 
-    pnpm dev → Start Vite dev server
-
-    pnpm build → Build for production
-
-    pnpm preview → Preview production build
-
-Deployment
-
-    Frontend → Vercel
-
-    Backend → VPS with Nginx + SSL
-
-    Domain → Managed via Cloudflare
+    pnpm preview: Serves the production build locally for testing.
 
 📄 License
 
 This project is licensed under the MIT License.
+```
