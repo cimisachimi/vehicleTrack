@@ -106,29 +106,33 @@ async function simulateMovement() {
 
       console.log(`Vehicle ${vehicle.name}: now at [${lat.toFixed(4)}, ${lon.toFixed(4)}] heading to ${newDestination}. Fuel: ${newFuelLevel.toFixed(2)}%`);
 
-    } else if (vehicle.status === "REFUELING") {
-      // --- Handle Refueling Logic ---
-      if (vehicle.refuelStartTime) {
-        const timeSinceRefuelStart = new Date().getTime() - vehicle.refuelStartTime.getTime();
-        const minutesPassed = timeSinceRefuelStart / (1000 * 60);
+    }  else if (vehicle.status === "REFUELING") {
+  // --- Handle Refueling Logic ---
+    if (vehicle.refuelStartTime) {
+      const timeSinceRefuelStart = new Date().getTime() - vehicle.refuelStartTime.getTime();
+      const minutesPassed = timeSinceRefuelStart / (1000 * 60);
 
-        if (minutesPassed >= REFUEL_TIME_MINUTES) {
-          // Refueling finished
-          await prisma.vehicle.update({
-            where: { id: vehicle.id },
-            data: {
-              status: "ACTIVE",
-              fuel_level: 100, // Full tank!
-              refuelStartTime: null, // Clear the start time
-              updated_at: new Date()
-            }
-          });
-          console.log(`Vehicle ${vehicle.name} has finished refueling and is now active.`);
-        } else {
-          console.log(`Vehicle ${vehicle.name} is still refueling...`);
-        }
-      }
+    if (minutesPassed >= REFUEL_TIME_MINUTES) {
+      // Refueling finished
+      const speeds = [60, 70, 80]; // <<< Define possible speeds
+      const randomSpeed = speeds[Math.floor(Math.random() * speeds.length)]; // <<< Pick a random speed
+
+      await prisma.vehicle.update({
+        where: { id: vehicle.id },
+        data: {
+          status: "ACTIVE",
+          fuel_level: 100, 
+          refuelStartTime: null, 
+          updated_at: new Date(),
+          speed: randomSpeed, 
+        },
+      });
+      console.log(`Vehicle ${vehicle.name} has finished refueling and is now active.`);
+    } else {
+      console.log(`Vehicle ${vehicle.name} is still refueling...`);
     }
+  }
+}
   }
 }
 
