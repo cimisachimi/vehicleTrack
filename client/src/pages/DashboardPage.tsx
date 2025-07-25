@@ -3,7 +3,13 @@ import { useVehicleStore } from "@/store/useVehicleStore";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import Navbar from "@/components/Navbar";
-import { MapContainer, TileLayer, Marker, Popup, Tooltip } from "react-leaflet"; // 1. Import Tooltip
+import {
+  MapContainer,
+  TileLayer,
+  Marker,
+  Popup,
+  Tooltip,
+} from "react-leaflet"; // 1. Import Tooltip
 import { Icon } from "leaflet";
 import {
   Table,
@@ -44,18 +50,26 @@ export default function DashboardPage() {
 
   const defaultCenter: [number, number] = [-6.2, 106.816666];
 
-  const createIcon = (iconUrl: string) => new Icon({
-    iconUrl,
-    shadowUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png",
-    iconSize: [25, 41],
-    iconAnchor: [12, 41],
-    popupAnchor: [1, -34],
-    shadowSize: [41, 41],
-  });
+  const createIcon = (iconUrl: string) =>
+    new Icon({
+      iconUrl,
+      shadowUrl:
+        "https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png",
+      iconSize: [25, 41],
+      iconAnchor: [12, 41],
+      popupAnchor: [1, -34],
+      shadowSize: [41, 41],
+    });
 
-  const greenIcon = createIcon("https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png");
-  const redIcon = createIcon("https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png");
-  const yellowIcon = createIcon("https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-yellow.png");
+  const greenIcon = createIcon(
+    "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png"
+  );
+  const redIcon = createIcon(
+    "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png"
+  );
+  const yellowIcon = createIcon(
+    "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-yellow.png"
+  );
 
   const getMarkerIcon = (status: string) => {
     switch (status) {
@@ -96,15 +110,22 @@ export default function DashboardPage() {
                         <TableCell className="font-medium">{v.name}</TableCell>
                         <TableCell>
                           <span
-                            className={`px-2 py-1 rounded text-xs font-semibold ${getStatusClass(v.status)}`}
+                            className={`px-2 py-1 rounded text-xs font-semibold ${getStatusClass(
+                              v.status
+                            )}`}
                           >
                             {v.status}
                           </span>
                         </TableCell>
-                        <TableCell>{v.speed} km/h</TableCell>
+                        <TableCell>
+                          {v.status === "REFUELING" ? 0 : v.speed} km/h
+                        </TableCell>
                         <TableCell>
                           <div className="flex items-center gap-2">
-                            <Progress value={v.fuel_level} className="h-2 w-20" />
+                            <Progress
+                              value={v.fuel_level}
+                              className="h-2 w-20"
+                            />
                             <span>{v.fuel_level.toFixed(1)}%</span>
                           </div>
                         </TableCell>
@@ -139,19 +160,24 @@ export default function DashboardPage() {
                       <div>
                         <p className="font-semibold">Status</p>
                         <span
-                          className={`px-2 py-1 rounded text-xs font-semibold ${getStatusClass(v.status)}`}
+                          className={`px-2 py-1 rounded text-xs font-semibold ${getStatusClass(
+                            v.status
+                          )}`}
                         >
                           {v.status}
                         </span>
                       </div>
-                       <div>
+                      <div>
                         <p className="font-semibold">Speed</p>
-                        <p>{v.speed} km/h</p>
+                        <p>{v.status === "REFUELING" ? 0 : v.speed} km/h</p>
                       </div>
-                       <div className="col-span-2">
+                      <div className="col-span-2">
                         <p className="font-semibold">Fuel</p>
                         <div className="flex items-center gap-2 mt-1">
-                          <Progress value={v.fuel_level} className="h-2 flex-1" />
+                          <Progress
+                            value={v.fuel_level}
+                            className="h-2 flex-1"
+                          />
                           <span>{v.fuel_level.toFixed(1)}%</span>
                         </div>
                       </div>
@@ -200,7 +226,7 @@ export default function DashboardPage() {
                   <br />
                   Status: {v.status}
                   <br />
-                  Speed: {v.speed} km/h
+                  Speed: {v.status === "REFUELING" ? 0 : v.speed} km/h
                   <br />
                   Destination: {v.destination}
                 </Popup>

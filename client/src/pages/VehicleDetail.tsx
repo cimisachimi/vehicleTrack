@@ -87,18 +87,26 @@ export default function VehicleDetail() {
   ]);
   const currentPosition: [number, number] = [latitude, longitude];
 
-  const createIcon = (iconUrl: string) => new Icon({
-    iconUrl,
-    shadowUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png",
-    iconSize: [25, 41],
-    iconAnchor: [12, 41],
-    popupAnchor: [1, -34],
-    shadowSize: [41, 41],
-  });
+  const createIcon = (iconUrl: string) =>
+    new Icon({
+      iconUrl,
+      shadowUrl:
+        "https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png",
+      iconSize: [25, 41],
+      iconAnchor: [12, 41],
+      popupAnchor: [1, -34],
+      shadowSize: [41, 41],
+    });
 
-  const greenIcon = createIcon("https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png");
-  const redIcon = createIcon("https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png");
-  const yellowIcon = createIcon("https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-yellow.png");
+  const greenIcon = createIcon(
+    "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png"
+  );
+  const redIcon = createIcon(
+    "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png"
+  );
+  const yellowIcon = createIcon(
+    "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-yellow.png"
+  );
 
   const getStatusInfo = () => {
     switch (status) {
@@ -148,7 +156,9 @@ export default function VehicleDetail() {
             <CardContent>
               <div className="flex items-center gap-2">
                 <Progress value={fuel_level} className="h-3 flex-1" />
-                <span className="text-lg font-bold">{fuel_level.toFixed(1)}%</span>
+                <span className="text-lg font-bold">
+                  {fuel_level.toFixed(1)}%
+                </span>
               </div>
             </CardContent>
           </Card>
@@ -158,7 +168,9 @@ export default function VehicleDetail() {
               <Zap className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{speed} km/h</div>
+              <div className="text-2xl font-bold">
+                {status === "REFUELING" ? 0 : speed} km/h
+              </div>
             </CardContent>
           </Card>
           <Card>
@@ -172,7 +184,9 @@ export default function VehicleDetail() {
           </Card>
           <Card>
             <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium">Route Progress</CardTitle>
+              <CardTitle className="text-sm font-medium">
+                Route Progress
+              </CardTitle>
               <MapPin className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
@@ -196,16 +210,13 @@ export default function VehicleDetail() {
                 attribution="&copy; OpenStreetMap"
               />
               <MapUpdater center={currentPosition} zoom={10} />
-              <Marker
-                position={currentPosition}
-                icon={statusInfo.icon}
-              >
+              <Marker position={currentPosition} icon={statusInfo.icon}>
                 <Popup>
                   <strong>{name}</strong>
                   <br />
                   Status: {status}
                   <br />
-                  Speed: {speed} km/h
+                  Speed: {status === "REFUELING" ? 0 : speed} km/h
                   <br />
                   Destination: {destination}
                 </Popup>

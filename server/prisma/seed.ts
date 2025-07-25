@@ -12,7 +12,7 @@ async function main() {
       {
         name: "Truck Barang",
         status: "ACTIVE",
-        fuel_level: 39,
+        fuel_level: 7,
         odometer: 12000,
         latitude: -6.2088,
         longitude: 106.8456,

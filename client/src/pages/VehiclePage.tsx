@@ -75,14 +75,19 @@ export default function VehiclePage() {
                       <TableCell className="font-medium">{v.name}</TableCell>
                       <TableCell>
                         <span
-                          className={`px-2 py-1 rounded text-xs font-semibold ${getStatusClass(v.status)}`}
+                          className={`px-2 py-1 rounded text-xs font-semibold ${getStatusClass(
+                            v.status
+                          )}`}
                         >
                           {v.status}
                         </span>
                       </TableCell>
                       <TableCell>
                         <div className="flex items-center gap-2">
-                          <Progress value={v.fuel_level} className="h-2 w-20" />
+                          <Progress
+                            value={v.fuel_level}
+                            className="h-2 w-20"
+                          />
                           {/* Use toFixed(0) for a whole number percentage */}
                           <span>{v.fuel_level.toFixed(0)}%</span>
                         </div>
@@ -93,7 +98,9 @@ export default function VehiclePage() {
                       <TableCell>
                         {v.latitude.toFixed(4)}, {v.longitude.toFixed(4)}
                       </TableCell>
-                      <TableCell>{v.speed} km/h</TableCell>
+                      <TableCell>
+                        {v.status === "REFUELING" ? 0 : v.speed} km/h
+                      </TableCell>
                       <TableCell>{v.destination}</TableCell>
                       <TableCell>
                         {new Date(v.updated_at).toLocaleString()}
@@ -117,7 +124,9 @@ export default function VehiclePage() {
               {vehicles.map((v) => (
                 <Card key={v.id}>
                   <CardHeader>
-                    <CardTitle>#{v.id} - {v.name}</CardTitle>
+                    <CardTitle>
+                      #{v.id} - {v.name}
+                    </CardTitle>
                     <CardDescription>
                       Last updated: {new Date(v.updated_at).toLocaleString()}
                     </CardDescription>
@@ -127,7 +136,9 @@ export default function VehiclePage() {
                       <p className="font-semibold">Status</p>
                       <p>
                         <span
-                          className={`px-2 py-1 rounded text-xs font-semibold ${getStatusClass(v.status)}`}
+                          className={`px-2 py-1 rounded text-xs font-semibold ${getStatusClass(
+                            v.status
+                          )}`}
                         >
                           {v.status}
                         </span>
@@ -135,12 +146,15 @@ export default function VehiclePage() {
                     </div>
                     <div>
                       <p className="font-semibold">Speed</p>
-                      <p>{v.speed} km/h</p>
+                      <p>{v.status === "REFUELING" ? 0 : v.speed} km/h</p>
                     </div>
                     <div className="col-span-2">
                       <p className="font-semibold">Fuel</p>
                       <div className="flex items-center gap-2 mt-1">
-                        <Progress value={v.fuel_level} className="h-2 flex-1" />
+                        <Progress
+                          value={v.fuel_level}
+                          className="h-2 flex-1"
+                        />
                         {/* Use toFixed(0) for a whole number percentage */}
                         <span>{v.fuel_level.toFixed(0)}%</span>
                       </div>
